@@ -9,7 +9,7 @@ module MoviesHelper
   end
   
   def selected(str, array)
-    if array.index(str) == nil
+    if array.keys.index(str) == nil
       false
     else
       true

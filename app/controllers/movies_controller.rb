@@ -10,23 +10,26 @@ class MoviesController < ApplicationController
     if !params[:ratings].nil? and !params[:sort].nil? then
       @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort].to_s)
       session[:sort] = params[:sort]
-      session[:ratings] = params[:ratings].keys
+      session[:ratings] = params[:ratings]
     elsif !params[:ratings].nil? then
       @movies = Movie.where(:rating => params[:ratings].keys)
-      session[:ratings] = params[:ratings].keys
+      session[:ratings] = params[:ratings]
       session[:sort] = ""
     elsif !params[:sort].nil? then
       session[:sort] = params[:sort]
-      if session[:ratings].empty? then
-        session[:ratings] = []
+      if session[:ratings].keys.empty? then
+        session[:ratings] = Hash.new
         @movies = Movie.order(params[:sort].to_s)
       else
-        @movies = Movie.where(:rating => session[:ratings]).order(params[:sort].to_s)
+        @movies = Movie.where(:rating => session[:ratings].keys).order(params[:sort].to_s)
       end    
     else
+      if session[:sort] != "" or !session[:ratings].keys.empty?
+        redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings])
+      end
       @movies = Movie.all
       session[:sort] = ""
-      session[:ratings] = []
+      session[:ratings] = Hash.new
     end
     @all_ratings = []
     Movie.all.each do |movie|
