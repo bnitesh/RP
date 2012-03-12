@@ -7,13 +7,28 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if !params[:sort].nil? then
-      flash[:sort] = params[:sort]
-      @movies = Movie.order(params[:sort].to_s).all
+    if !params[:ratings].nil? and !params[:sort].nil? then
+      @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort].to_s)
+      session[:sort] = params[:sort]
+      session[:ratings] = params[:ratings].keys
+    elsif !params[:ratings].nil? then
+      @movies = Movie.where(:rating => params[:ratings].keys)
+      session[:ratings] = params[:ratings].keys
+      session[:sort] = ""
+    elsif !params[:sort].nil? then
+      session[:sort] = params[:sort]
+      session[:ratings] = []
+      @movies = Movie.order(params[:sort].to_s)
     else
-      flash[:sort] = ""
-      @movies = Movie.all      
+      @movies = Movie.all
+      session[:sort] = ""
+      session[:ratings] = []
     end
+    @all_ratings = []
+    Movie.all.each do |movie|
+      @all_ratings << movie.rating
+    end
+    @all_ratings.uniq!.sort!
   end
 
   def new

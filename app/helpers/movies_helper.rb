@@ -7,4 +7,12 @@ module MoviesHelper
   def order(string1, string2)
     string1 == string2 ? "hilite": ""
   end
+  
+  def selected(str, array)
+    if array.index(str) == nil
+      false
+    else
+      true
+    end
+  end
 end
