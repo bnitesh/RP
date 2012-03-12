@@ -17,8 +17,12 @@ class MoviesController < ApplicationController
       session[:sort] = ""
     elsif !params[:sort].nil? then
       session[:sort] = params[:sort]
-      session[:ratings] = []
-      @movies = Movie.order(params[:sort].to_s)
+      if session[:ratings].empty? then
+        session[:ratings] = []
+        @movies = Movie.order(params[:sort].to_s)
+      else
+        @movies = Movie.where(:rating => session[:ratings]).order(params[:sort].to_s)
+      end    
     else
       @movies = Movie.all
       session[:sort] = ""
